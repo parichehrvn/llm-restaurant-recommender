@@ -1,0 +1,21 @@
+services:
+  es8:
+    image: elasticsearch:8.16.1
+    container_name: es8
+    environment:
+      - node.name=es8
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    mem_limit: 2g  # Limit to 2GB
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+volumes:
+  data:
+    driver: local
