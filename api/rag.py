@@ -5,17 +5,16 @@ import os
 import spacy
 import json
 from dotenv import load_dotenv
-from llama_index.embeddings.ollama import OllamaEmbedding
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 
 # ---------------------- Config ---------------------- #
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("googleAIStudio")
 ES_HOST = os.getenv("ES_HOST", "http://localhost:9200")
-INDEX_NAME = os.getenv("ES_INDEX", "reviews_gemini")
-EMBED_MODEL = "all-minilm:latest"
+INDEX_NAME = os.getenv("ES_INDEX", "restaurant_reviews")
+EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 GEN_MODEL = "gemini-1.5-flash"
-EMBED_DIMS = 512
 
 # KNN config
 K = 50
@@ -31,11 +30,7 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 
 def create_embedding(text):
-    embed_model = OllamaEmbedding(
-        model_name="all-minilm:latest",
-        base_url="http://localhost:11434",
-        ollama_additional_kwargs={"mirostat": 0},
-    )
+    embed_model = HuggingFaceEmbedding(model_name=EMBED_MODEL)
     try:
         embedding = embed_model.get_query_embedding(text)
         return embedding
