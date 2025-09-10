@@ -13,8 +13,8 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("googleAIStudio")
 ES_HOST = os.getenv("ES_HOST", "http://localhost:9200")
 INDEX_NAME = os.getenv("ES_INDEX", "restaurant_reviews")
-EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 GEN_MODEL = "gemini-1.5-flash"
+EMBED_MODEL = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # KNN config
 K = 50
@@ -30,9 +30,9 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 
 def create_embedding(text):
-    embed_model = HuggingFaceEmbedding(model_name=EMBED_MODEL)
+    # embed_model = HuggingFaceEmbedding(model_name=EMBED_MODEL)
     try:
-        embedding = embed_model.get_query_embedding(text)
+        embedding = EMBED_MODEL.get_query_embedding(text)
         return embedding
     except Exception as e:
         print(f"Embedding error: {e}")
