@@ -12,16 +12,15 @@ The project is fully **containerized** with **Docker**, with automated deploymen
 
 ---
 ##  Features
+The system helps users by:
 
-- Conversational restaurant recommendations.
+- Recommending restaurants based on their preferences.
 
 - Context-aware responses powered by RAG.
 
-- Semantic search with Elasticsearch + Ollama embeddings.
+- Answering specific questions about restaurants.
 
-- Streamlit interface for easy interaction.
-
-- Backend API built with FastAPI for modularity.
+- Summarizing reviews to highlight both strengths and weaknesses.
  
 ---
 ## Tech Stack
