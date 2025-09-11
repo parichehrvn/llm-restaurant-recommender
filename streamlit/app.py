@@ -27,14 +27,14 @@ def get_summary(res_name):
 
 @st.cache_data
 def get_answers(res_name, user_query):
-    payload = {"query": user_query + f" in {res_name}", "restaurant_name": res_name}
+    payload = {'query': user_query + f' in {res_name}', 'restaurant_name': res_name}
     response = requests.post(f'{API_URL}/query', json=payload)
     if response.status_code == 200:
         result = response.json()
         return result
     else:
-        st.error("Failed to fetch")
-        return "No answers available"
+        st.error('Failed to fetch')
+        return 'No answers available'
 
 
 st.set_page_config(
@@ -45,7 +45,7 @@ st.set_page_config(
 
 
 if 'query' not in st.session_state:
-    st.session_state['query'] = ""
+    st.session_state['query'] = ''
 
 if 'suggestion' not in st.session_state:
     st.session_state['suggestion'] = []
@@ -56,7 +56,7 @@ if 'active_window' not in st.session_state:
 if 'selected_restaurant' not in st.session_state:
     st.session_state['selected_restaurant'] = None
 
-if "messages" not in st.session_state:
+if 'messages' not in st.session_state:
     st.session_state['messages'] = []
 
 
@@ -75,17 +75,17 @@ def home():
            response = get_suggestions(query)
            st.session_state['suggestion'] = response
        else:
-           st.warning("⚠️ Enter a valid query")
+           st.warning('⚠️ Enter a valid query')
 
     if st.session_state['suggestion']:
-        st.subheader("Recommendations")
+        st.subheader('Recommendations')
         st.write(st.session_state['suggestion']['greeting'])
 
         for idx, suggestion in enumerate(st.session_state['suggestion']['suggestions']):
             col1, col2 = st.columns([1, 3])
             with col1:
                 # Unique key for each button to avoid Streamlit key conflicts
-                if st.button(suggestion['restaurant_name'], key=f"btn_{idx}"):
+                if st.button(suggestion['restaurant_name'], key=f'btn_{idx}'):
                     # if st.session_state['selected_restaurant'] == suggestion['restaurant_name']:
                     st.session_state['selected_restaurant'] = suggestion['restaurant_name']
                     st.session_state['messages'] = []
@@ -98,8 +98,8 @@ def home():
 
             if st.session_state['selected_restaurant'] == suggestion['restaurant_name']:
                 summary = get_summary(suggestion['restaurant_name'])
-                st.info(summary['conclusion'], icon="ℹ️")
-                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Must try dishes", "Highlights", "Things to be noted", "Location", "Rating"])
+                st.info(summary['conclusion'], icon='ℹ️')
+                tab1, tab2, tab3, tab4, tab5 = st.tabs(['Must try dishes', 'Highlights', 'Things to be noted', 'Location', 'Rating'])
                 with tab1:
                     for i in summary['must_try_dishes']:
                         st.write(f'🍽️ {i}')
@@ -116,21 +116,21 @@ def home():
 def chat_bot():
     if st.session_state['selected_restaurant']:
         with st.sidebar:
-            st.title(f"Ask questions about {st.session_state['selected_restaurant']}")
-            user_input = st.chat_input("Type your question here...", key=f"chat_{st.session_state['selected_restaurant']}")
+            st.title(f'Ask questions about {st.session_state['selected_restaurant']}')
+            user_input = st.chat_input('Type your question here...', key=f'chat_{st.session_state['selected_restaurant']}')
             if user_input:
                 bot_response = get_answers(st.session_state['selected_restaurant'], user_input)
                 bot_response = bot_response['answer']
-                chat = [{"role": "user", "content": user_input}, {"role": "assistant",
-                                                                  "content": f':blue-background[{st.session_state['selected_restaurant']}]: {bot_response}'}]
+                chat = [{'role': 'user', 'content': user_input}, {'role': 'assistant',
+                                                                  'content': f':blue-background[{st.session_state["selected_restaurant"]}]: {bot_response}'}]
                 st.session_state.messages.append(chat)
             chat_container = st.container()
             with chat_container:
                 for chat in reversed(st.session_state.messages):
                     with st.container(border=True):
-                        st.chat_message(chat[0]['role'], avatar="🧑").markdown(f'**{chat[0]['content']}**')
+                        st.chat_message(chat[0]['role'], avatar='🧑').markdown(f'**{chat[0]['content']}**')
 
-                    st.chat_message(chat[1]['role'], avatar="🤖").markdown(chat[1]['content'])
+                    st.chat_message(chat[1]['role'], avatar='🤖').markdown(chat[1]['content'])
 
 
 with st.spinner('Fetching your data...⌛'):
