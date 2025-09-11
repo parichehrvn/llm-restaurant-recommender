@@ -1,0 +1,47 @@
+services:
+  elasticsearch:
+    image: elasticsearch:8.16.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - 9200:9200
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - rag_network
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    networks:
+      - rag_network
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: streamlit/Dockerfile
+    ports:
+      - 8501:8501
+    depends_on:
+      - fastapi
+    environment:
+      - FASTAPI_URL=http://fastapi:8000
+    networks:
+      - rag_network
+
+volumes:
+  es_data:
+
+networks:
+  rag_network:
+    driver: bridge
+
+
